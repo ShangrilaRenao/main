@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shangrila Renao — Mountain Cabin Retreats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --amber: #C8924A;
+      --mist:  #F0EDE6;
+      --forest:#0D1A12;
+      --sky:   #8BAAB8;
+      --pad-v: clamp(1.6rem, 4vw, 3.2rem);
+      --pad-h: clamp(1.4rem, 5vw, 4rem);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--forest);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: fixed; inset: 0;
+    }
+    .hero__img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 40%;
+      display: block;
+      filter: brightness(0.88) saturate(1.08);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(10,16,12,0.68) 0%,
+        rgba(10,16,12,0.10) 38%,
+        rgba(10,16,12,0.08) 55%,
+        rgba(10,16,12,0.60) 100%);
+      z-index: 1;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 45%, transparent 30%, rgba(10,16,12,0.30) 100%);
+      z-index: 2;
+    }
+
+    /* ── GRAIN ── */
+    .grain {
+      position: fixed; inset: 0; z-index: 9;
+      pointer-events: none; opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat; background-size: 180px;
+    }
+
+    /* ═══════════════════════════════════════════
+       WORDMARK INTRO ANIMATION
+       Phase 1 (0–1.1s)  : huge SHANGRILA, white, centre screen
+       Phase 2 (1.1–2.1s): shrinks to top-centre, becomes ghost outline
+       Phase 3 (2.2s+)   : RENAO + rest of UI fade in
+    ═══════════════════════════════════════════ */
+
+    .wordmark-ghost {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      white-space: nowrap;
+      user-select: none;
+      display: block;
+      text-align: center;
+
+      /* fixed layer above everything */
+      position: fixed;
+      z-index: 30;
+
+      /* ── START: big, white, dead-centre ── */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(3.6rem, 10.5vw, 9.8rem);
+      color: var(--mist);
+      -webkit-text-stroke: 0px transparent;
+      opacity: 1;
+
+      animation: ghostShrink 1.05s cubic-bezier(0.76, 0, 0.24, 1) 1.05s forwards;
+    }
+
+    @keyframes ghostShrink {
+      /* 0% {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: clamp(3.6rem, 10.5vw, 9.8rem);
+        color: var(--mist);
+        -webkit-text-stroke: 0px transparent;
+      } */
+      100% {
+        top: var(--pad-v);
+        left: 50%;
+        transform: translate(-50%, 0);
+        /* font-size: clamp(1.0rem, 2.2vw, 1.85rem); */
+        color: transparent;
+        /* -webkit-text-stroke: 1px rgba(240,237,230,0.42); */
+      }
+    }
+
+    /* RENAO — appears just below the settled ghost */
+    .wordmark-renao {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.40em;
+      white-space: nowrap;
+      color: var(--amber);
+      font-size: clamp(0.50rem, 1.0vw, 0.80rem);
+
+      position: fixed;
+      z-index: 30;
+      /* sits right below the shrunken ghost; JS will position after animation,
+         but CSS approximates: ghost settles at top ~pad-v, height ~1.85rem */
+      top: calc(var(--pad-v) + clamp(1.0rem, 2.2vw, 1.85rem) + 0.25rem);
+      left: 50%;
+      transform: translateX(-50%);
+
+      opacity: 0;
+      animation: fadeIn 0.5s ease 2.15s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* ── SHELL ── */
+    .shell {
+      position: fixed; inset: 0; z-index: 20;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: space-between;
+      padding: var(--pad-v) var(--pad-h);
+      pointer-events: none;
+    }
+
+    /* top-bar: just the badge + dot (wordmark sits above via fixed) */
+    .top-bar {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      pointer-events: auto;
+      opacity: 0;
+      animation: fadeIn 0.7s ease 2.4s forwards;
+    }
+
+    .badge {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.55rem, 1.1vw, 0.70rem);
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--mist); opacity: 0.68;
+    }
+    .badge span { color: var(--amber); opacity: 1; }
+
+    .nav-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--amber); opacity: 0.80;
+    }
+
+    /* ── CENTRE (tagline + pill) ── */
+    .centre {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 2.35s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .divider-line {
+      width: clamp(40px, 8vw, 90px); height: 1px;
+      background: linear-gradient(to right, transparent, var(--amber), transparent);
+      margin: 0 auto clamp(0.9rem, 2vw, 1.6rem);
+      opacity: 0.72;
+    }
+
+    .tagline {
+      font-family: 'Jost', sans-serif;
+      font-weight: 400;
+      font-size: clamp(0.58rem, 1.25vw, 0.78rem);
+      letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--mist); opacity: 0.68;
+    }
+
+    .launching-pill {
+      display: inline-flex; align-items: center; gap: 0.5em;
+      margin-top: clamp(1.2rem, 2.8vw, 2.2rem);
+      padding: 0.45em 1.4em;
+      border: 1px solid rgba(200,146,74,0.38);
+      border-radius: 100px;
+      pointer-events: auto;
+    }
+
+    .launching-pill__dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--amber);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .launching-pill__text {
+      font-family: 'Jost', sans-serif; font-weight: 300;
+      font-size: clamp(0.54rem, 1.05vw, 0.68rem);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--mist); opacity: 0.80;
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar {
+      width: 100%; display: flex;
+      align-items: flex-end; justify-content: space-between;
+      pointer-events: auto;
+      opacity: 0;
+      animation: fadeIn 0.7s ease 2.4s forwards;
+    }
+
+    .links {
+      display: flex; flex-direction: column;
+      gap: clamp(0.55rem, 1.3vw, 1.0rem);
+    }
+
+    .link-row {
+      display: flex; align-items: center; gap: 0.8em;
+      text-decoration: none; opacity: 0.65;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .link-row:hover { opacity: 1; transform: translateX(3px); }
+
+    .link-icon { width: clamp(13px, 2vw, 16px); height: clamp(13px, 2vw, 16px); flex-shrink: 0; }
+    .link-row svg { fill: var(--mist); }
+
+    .link-label {
+      font-family: 'Jost', sans-serif; font-weight: 200;
+      font-size: clamp(0.54rem, 1.05vw, 0.68rem);
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--mist);
+    }
+
+    .location-stamp { text-align: right; }
+
+    .location-stamp__main {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300; font-style: italic;
+      font-size: clamp(0.88rem, 1.9vw, 1.25rem);
+      color: var(--mist); opacity: 0.62; display: block;
+    }
+
+    .location-stamp__sub {
+      font-family: 'Jost', sans-serif; font-weight: 200;
+      font-size: clamp(0.46rem, 0.88vw, 0.58rem);
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--sky); opacity: 0.68;
+      display: block; margin-top: 0.2em;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      .badge, .nav-dot { display: none; }
+
+      .bottom-bar { flex-direction: column; align-items: center; gap: 1.4rem; }
+      .links { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.7rem 1.4rem; }
+      .link-label { display: none; }
+      .link-icon { width: 20px; height: 20px; }
+      .link-row { opacity: 0.75; }
+      .location-stamp { text-align: center; }
+    }
+
+    @media (max-width: 380px) {
+      .wordmark-ghost { letter-spacing: 0.08em; }
+      .wordmark-renao { letter-spacing: 0.24em; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND -->
+  <div class="hero">
+    <img class="hero__img"
+      src="/assets/hero.jpeg"
+      alt="Mountain retreat — sunlit peaks beyond a private cabin" />
+  </div>
+
+  <!-- GRAIN -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- WORDMARK LAYER (animated, fixed above everything) -->
+  <h1 class="wordmark-ghost" id="ghostWord">Shangrila</h1>
+  <p  class="wordmark-renao" id="renaoWord" aria-hidden="true">Renao</p>
+
+  <!-- UI SHELL -->
+  <div class="shell" role="main">
+
+    <!-- TOP -->
+    <header class="top-bar">
+      <p class="badge">Est. <span>2023</span> &nbsp;·&nbsp; Himalayan Retreats</p>
+      <div class="nav-dot" aria-hidden="true"></div>
+    </header>
+
+    <!-- CENTRE -->
+    <div class="centre" role="banner">
+      <div class="divider-line" aria-hidden="true"></div>
+      <p class="tagline">Private Mountain Cabins</p>
+      <div class="launching-pill" aria-label="Status: coming soon">
+        <span class="launching-pill__dot" aria-hidden="true"></span>
+        <span class="launching-pill__text">Jibhi, Himachal Pradesh</span>
+      </div>
+    </div>
+
+    <!-- BOTTOM -->
+    <footer class="bottom-bar">
+
+      <nav class="links" aria-label="Find us on">
+
+        <a class="link-row" href="https://www.airbnb.com/h/temploamor-shangrilarenao" target="_blank" rel="noopener" aria-label="Book on Airbnb">
+          <span class="link-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.692c1.01 0 1.846.836 1.846 1.846S13.01 7.385 12 7.385s-1.846-.836-1.846-1.847S10.99 3.692 12 3.692zm4.385 13.577c-.154.462-.693 1.385-2.308 2.077-.923.385-2 .462-2.77.077-.538-.27-.923-.693-.923-1.385 0-.73.577-1.693 1.692-2.923.27-.308.577-.616.924-.923.346.307.653.615.923.923 1.115 1.23 1.692 2.193 1.692 2.923 0 .307-.077.615-.23.23zm1.693-5.077c-.77 2.077-2.923 3.692-4.616 5.077-.308.23-.615.46-.923.692a25.77 25.77 0 01-.923-.692C9.923 15.884 7.77 14.27 7 12.192c-.385-1-.385-2.077 0-2.923.539-1.154 1.693-1.846 2.923-1.846.693 0 1.385.23 2 .692L12 8.23l.077-.115c.615-.462 1.307-.692 2-.692 1.23 0 2.384.692 2.923 1.846.385.846.385 1.923 0 2.923z"/>
+            </svg>
+          </span>
+          <span class="link-label">Airbnb</span>
+        </a>
+
+        <a class="link-row" href="https://instagram.com/shangrilarenao?igshid=OGQ5ZDc2ODk2ZA==" target="_blank" rel="noopener" aria-label="Follow on Instagram">
+          <span class="link-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </span>
+          <span class="link-label">Instagram</span>
+        </a>
+
+        <a class="link-row" href="https://app.mmyt.co/Xm2V/ddwwh772" target="_blank" rel="noopener" aria-label="Find on MakeMyTrip">
+          <span class="link-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+            </svg>
+          </span>
+          <span class="link-label">MakeMyTrip</span>
+        </a>
+
+        <a class="link-row" href="mailto:Shangrilarenao@gmail.com" aria-label="Email us">
+          <span class="link-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </span>
+          <span class="link-label">Mail us</span>
+        </a>
+
+      </nav>
+
+      <div class="location-stamp" aria-label="Location">
+        <span class="location-stamp__main">Himachal Pradesh, India</span>
+        <span class="location-stamp__sub">🏆India’s Most ROMANTIC ESCAPE 2026🏆
+</span>
+      </div>
+
+    </footer>
+  </div>
+
+  <script>
+    // After the shrink animation completes, lock the wordmark
+    // into its final small state so it stays crisp on resize.
+    const ghost = document.getElementById('ghostWord');
+    const renao = document.getElementById('renaoWord');
+
+    ghost.addEventListener('animationend', () => {
+      // Read computed end values and apply inline so CSS vars recalculate on resize
+      ghost.style.top           = 'var(--pad-v)';
+      ghost.style.left          = '50%';
+      ghost.style.transform     = 'translate(-50%, 0)';
+      ghost.style.fontSize      = 'clamp(1.0rem, 2.2vw, 1.85rem)';
+      ghost.style.webkitTextStroke = '1px rgba(240,237,230,0.42)';
+      ghost.style.animation     = 'none';
+
+      // Position RENAO precisely beneath using getBoundingClientRect
+      const r = ghost.getBoundingClientRect();
+      renao.style.top       = (r.bottom + 4) + 'px';
+      renao.style.left      = '50%';
+      renao.style.transform = 'translateX(-50%)';
+    });
+  </script>
+
+</body>
+</html>
