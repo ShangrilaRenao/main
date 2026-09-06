@@ -16,8 +16,8 @@ function TrophyIcon() {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.5"
-      className="h-4 w-4 shrink-0 text-[#f4d071]"
+      strokeWidth="2.5"
+      className="h-6 w-4 shrink-0 text-[#f4d071]"
       aria-hidden="true"
     >
       <path d="M8 4h8v3a4 4 0 0 1-8 0V4Z" />
@@ -37,22 +37,22 @@ export function Hero() {
   useGSAP(
     () => {
       // intro reveal
-      gsap.from("[data-hero-line]", {
-        yPercent: 110,
-        opacity: 0,
-        duration: 1.4,
-        ease: "power4.out",
-        stagger: 0.15,
-        delay: 0.2,
-      })
-      gsap.from("[data-hero-meta]", {
-        opacity: 0,
-        y: 20,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 1,
-        stagger: 0.1,
-      })
+      // gsap.from("[data-hero-line]", {
+      //   yPercent: 110,
+      //   opacity: 0,
+      //   duration: 1.4,
+      //   ease: "power4.out",
+      //   stagger: 0.15,
+      //   delay: 0.2,
+      // })
+      // gsap.from("[data-hero-meta]", {
+      //   opacity: 0,
+      //   y: 20,
+      //   duration: 1.2,
+      //   ease: "power3.out",
+      //   delay: 1,
+      //   stagger: 0.1,
+      // })
 
       // parallax on scroll
       gsap.to(imageRef.current, {
@@ -89,12 +89,12 @@ export function Hero() {
           data-hero-meta
           className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-2 text-center"
         >
-          <span className="text-[0.7rem] uppercase tracking-[0.4em] text-background/80">
+          <span className="text-[0.8rem] font-bold uppercase tracking-[0.4em] text-background/80">
             Jibhi · Himachal Pradesh · India
           </span>
           <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1 shadow-[0_12px_30px_rgba(0,0,0,0.18)] backdrop-blur-md">
      <TrophyIcon />
-            <span className="text-[0.7rem] uppercase tracking-[0.28em] text-background/90">
+            <span className="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-background/90">
               INDIA'S MOST ROMANTIC ESCAPE 2026
             </span>
              <TrophyIcon />
@@ -110,7 +110,7 @@ export function Hero() {
         </div>
 
         <div className="mx-auto w-full max-w-7xl">
-       <h1 className="font-serif font-light leading-[0.92] text-background">
+     <h1 className="font-serif font-bold leading-[0.92] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)] sm:font-light">
   <span className="block overflow-hidden">
     <span
       data-hero-line

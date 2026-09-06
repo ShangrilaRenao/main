@@ -19,7 +19,7 @@ const items = [
   {
     src: "/images/stargazing.png",
     alt: "stargazing on a terrace with a view of the misty valley at night",
-    label: "The Bathhouse",
+    label: "Stargazing",
     span: "lg:col-span-5",
     ratio: "aspect-[4/3]",
   },
